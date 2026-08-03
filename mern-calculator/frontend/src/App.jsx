@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from "react";
 import Sidebar from "./components/Sidebar";
 import Header from "./components/Header";
+import LoginPage from "./components/LoginPage";
 import { HeroBanner, QuickActions } from "./components/Hero";
 import BasicCalculator from "./components/BasicCalculator";
 import ScientificCalculator from "./components/ScientificCalculator";
@@ -16,8 +17,18 @@ import {
   deleteHistoryItem,
   clearAllHistory,
 } from "./api/historyApi";
+import { fetchMe } from "./api/authApi";
 
 export default function App() {
+  const [user, setUser] = useState(() => {
+    try {
+      const cached = localStorage.getItem("user");
+      return cached ? JSON.parse(cached) : null;
+    } catch {
+      return null;
+    }
+  });
+
   const [active, setActive] = useState("Home");
   const [dark, setDark] = useState(() => localStorage.getItem("theme") !== "light");
   const [history, setHistory] = useState([]);
@@ -59,8 +70,7 @@ export default function App() {
       const data = await fetchHistory();
       setHistory(data);
       setApiError(false);
-    } catch (err) {
-      // Backend not running yet — fall back to an empty local list.
+    } catch {
       setApiError(true);
     } finally {
       setLoading(false);
@@ -68,19 +78,44 @@ export default function App() {
   }, []);
 
   useEffect(() => {
-    loadHistory();
-  }, [loadHistory]);
+    const token = localStorage.getItem("token");
+    if (token) {
+      fetchMe(token).then((u) => {
+        if (u) {
+          setUser(u);
+          localStorage.setItem("user", JSON.stringify(u));
+        }
+      });
+    }
+  }, []);
+
+  useEffect(() => {
+    if (user) {
+      loadHistory();
+    }
+  }, [user, loadHistory]);
 
   useEffect(() => {
     localStorage.setItem("theme", dark ? "dark" : "light");
   }, [dark]);
+
+  const handleLoginSuccess = (userData, token) => {
+    setUser(userData);
+    localStorage.setItem("user", JSON.stringify(userData));
+    if (token) localStorage.setItem("token", token);
+  };
+
+  const handleLogout = () => {
+    setUser(null);
+    localStorage.removeItem("user");
+    localStorage.removeItem("token");
+  };
 
   const handleCompute = async (entry) => {
     try {
       const saved = await saveHistory(entry);
       setHistory((h) => [saved, ...h]);
     } catch {
-      // If the API is unreachable, still show the result locally.
       setHistory((h) => [{ _id: crypto.randomUUID(), ...entry, favorite: false }, ...h]);
     }
   };
@@ -106,12 +141,16 @@ export default function App() {
     } catch {}
   };
 
+  if (!user) {
+    return <LoginPage onLoginSuccess={handleLoginSuccess} dark={dark} setDark={setDark} />;
+  }
+
   return (
     <div className={`min-h-screen flex ${dark ? "dark-theme" : "light-theme"}`}>
       <Sidebar active={active} onSelect={handleNavigation} />
 
       <div className="flex-1 min-w-0">
-        <Header dark={dark} setDark={setDark} />
+        <Header dark={dark} setDark={setDark} user={user} onLogout={handleLogout} />
 
         <main className="p-6 flex flex-col gap-6">
           {apiError && (
