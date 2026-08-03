@@ -1,0 +1,10 @@
+{
+  "name": "smart-calcy",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npm --prefix mern-calculator run dev",
+    "start": "npm --prefix mern-calculator run dev",
+    "install-all": "npm --prefix mern-calculator run install-all"
+  }
+}
