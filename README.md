@@ -10,6 +10,16 @@ A modern, full-stack **MERN (MongoDB, Express, React, Node.js)** application for
 
 ---
 
+## 📸 Application Screenshots
+
+### 📊 Dashboard Interface
+![Visual Scientific Calculator Dashboard](docs/screenshots/dashboard.png)
+
+### 🔐 Authentication & Login Page
+![Visual Scientific Calculator Login Page](docs/screenshots/login.png)
+
+---
+
 ## ✨ Features & Highlights
 
 ### 🔐 Authentication & User Profiles

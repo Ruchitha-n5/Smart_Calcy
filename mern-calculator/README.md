@@ -7,6 +7,16 @@ A modern, full-stack **MERN (MongoDB, Express, React, Node.js)** application for
 
 ---
 
+## 📸 Screenshots
+
+### Dashboard
+![Dashboard Interface](../docs/screenshots/dashboard.png)
+
+### Authentication & Login
+![Login Page](../docs/screenshots/login.png)
+
+---
+
 ## ⚡ Quick Start (Single Command)
 
 From the project root (`Smart_Calcy`), run:
