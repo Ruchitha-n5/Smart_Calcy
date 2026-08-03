@@ -9,7 +9,7 @@ function parseMatrix(text) {
 }
 
 function matToText(m) {
-  return m.map((row) => row.map((v) => (Number.isInteger(v) ? v : +v.toFixed(3))).join(" ")).join("\n");
+  return m.map((row) => row.map((v) => (Number.isInteger(v) ? v : +v.toFixed(2))).join("  ")).join("\n");
 }
 
 function add(a, b) {
@@ -64,12 +64,12 @@ function inverse(m) {
 
 function MatrixField({ label, value, onChange, result = false }) {
   return (
-    <div className="min-w-0">
-      <p className="matrix-label mb-2">{label}</p>
-      <div className={`matrix-field ${result ? "matrix-result" : ""}`}>
+    <div className="min-w-0 flex flex-col items-center">
+      <p className="matrix-label mb-2 text-center text-[11px]">{label}</p>
+      <div className={`matrix-field w-full ${result ? "matrix-result" : ""}`}>
         <span className="matrix-bracket matrix-bracket-left" aria-hidden="true" />
         {result ? (
-          <pre className="matrix-value">{value}</pre>
+          <pre className="matrix-value text-center font-mono text-xs">{value}</pre>
         ) : (
           <textarea
             value={value}
@@ -77,7 +77,7 @@ function MatrixField({ label, value, onChange, result = false }) {
             rows={2}
             spellCheck="false"
             aria-label={label}
-            className="matrix-input"
+            className="matrix-input text-center font-mono text-xs"
           />
         )}
         <span className="matrix-bracket matrix-bracket-right" aria-hidden="true" />
@@ -87,9 +87,9 @@ function MatrixField({ label, value, onChange, result = false }) {
 }
 
 export default function MatrixCalculator({ onCompute }) {
-  const [matA, setMatA] = useState("1 2\n3 4");
-  const [matB, setMatB] = useState("5 6\n7 8");
-  const [result, setResult] = useState("19 22\n43 50");
+  const [matA, setMatA] = useState("1  2\n3  4");
+  const [matB, setMatB] = useState("5  6\n7  8");
+  const [result, setResult] = useState("19  22\n43  50");
   const [op, setOp] = useState("Multiply");
   const [error, setError] = useState("");
 
@@ -132,28 +132,33 @@ export default function MatrixCalculator({ onCompute }) {
   };
 
   return (
-    <div className="card matrix-calculator p-4">
-      <div className="flex items-center gap-2 mb-5">
-        <Grid3x3 size={16} className="text-accent-purple" />
-        <h3 className="font-semibold">Matrix Calculator</h3>
+    <div className="card h-full p-5 flex flex-col justify-between">
+      <div>
+        {/* Header */}
+        <div className="flex items-center gap-2 mb-4">
+          <Grid3x3 size={16} className="text-accent-purple" />
+          <h3 className="font-semibold text-sm">Matrix Calculator</h3>
+        </div>
+
+        {/* Matrices Row */}
+        <div className="grid grid-cols-3 gap-3 text-xs items-center justify-center min-h-[90px]">
+          <MatrixField label="Matrix A" value={matA} onChange={setMatA} />
+          <MatrixField label="Matrix B" value={matB} onChange={setMatB} />
+          <MatrixField label={op === "Multiply" ? "A \u00d7 B =" : `Result (${op})`} value={result} result />
+        </div>
+
+        {error && <p className="text-[11px] text-red-400 mt-2 text-center">{error}</p>}
       </div>
 
-      <div className="grid grid-cols-3 gap-4 text-xs">
-        <MatrixField label="Matrix A" value={matA} onChange={setMatA} />
-        <MatrixField label="Matrix B" value={matB} onChange={setMatB} />
-        <MatrixField label={op === "Multiply" ? "A × B =" : `Result (${op})`} value={result} result />
-      </div>
-
-      {error && <p className="text-xs text-red-400 mt-2">{error}</p>}
-
-      <div className="grid grid-cols-5 gap-1.5 mt-5 text-xs">
+      {/* Operation Buttons */}
+      <div className="grid grid-cols-5 gap-1.5 mt-4 text-[11px] font-medium">
         {["Add", "Subtract", "Multiply", "Inverse", "Determinant"].map((label) => (
           <button
             key={label}
             onClick={() => run(label)}
-            className={`matrix-action py-2 rounded-md border ${
+            className={`py-1.5 px-1 rounded-md border text-center transition-all ${
               op === label
-                ? "bg-accent-purple border-accent-purple text-white"
+                ? "bg-accent-purple border-accent-purple text-white font-semibold"
                 : "bg-bg-soft border-border text-white/70 hover:bg-white/5"
             }`}
           >

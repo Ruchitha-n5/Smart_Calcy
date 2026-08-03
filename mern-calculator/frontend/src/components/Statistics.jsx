@@ -37,68 +37,66 @@ export default function Statistics({ onCompute }) {
 
   const chartData = useMemo(() => {
     const counts = {};
-    nums.forEach((n) => (counts[n] = (counts[n] || 0) + 1));
+    for (let i = 1; i <= 10; i++) counts[i] = 0;
+    nums.forEach((n) => {
+      if (counts[n] !== undefined) counts[n] += 1;
+      else counts[n] = 1;
+    });
     return Object.entries(counts)
       .map(([k, v]) => ({ x: k, count: v }))
       .sort((a, b) => Number(a.x) - Number(b.x));
   }, [nums]);
 
   return (
-    <div className="card p-5">
-      <div className="flex items-center gap-2 mb-3">
-        <BarChart3 size={16} className="text-accent-blue" />
-        <h3 className="font-semibold">Statistics</h3>
-      </div>
-
-      <p className="text-xs text-white/40 mb-1">Dataset</p>
-      <input
-        value={input}
-        onChange={(e) => setInput(e.target.value)}
-        className="w-full bg-bg-soft border border-border rounded-md px-3 py-2 text-sm mb-4 outline-none focus:border-accent-purple font-mono"
-      />
-
-      {stats && (
-        <div className="grid grid-cols-4 gap-3 text-center mb-4 text-sm">
-          <Stat label="Mean" value={stats.mean.toFixed(2).replace(/\.00$/, "")} />
-          <Stat label="Median" value={stats.median} />
-          <Stat label="Mode" value={stats.mode} />
-          <Stat label="Std. Dev." value={stats.stdDev.toFixed(3)} />
+    <div className="card h-full p-5 flex flex-col justify-between">
+      <div>
+        {/* Header */}
+        <div className="flex items-center gap-2 mb-3">
+          <BarChart3 size={16} className="text-accent-blue" />
+          <h3 className="font-semibold text-sm">Statistics</h3>
         </div>
-      )}
 
-      <div className="bg-bg-soft border border-border rounded-xl h-40 p-2">
-        <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={chartData}>
-            <CartesianGrid stroke="#2a2540" strokeDasharray="3 3" vertical={false} />
-            <XAxis dataKey="x" stroke="#6b6480" fontSize={11} />
-            <YAxis stroke="#6b6480" fontSize={11} allowDecimals={false} />
-            <Bar dataKey="count" fill="#3b82f6" radius={[4, 4, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
+        {/* Dataset Input */}
+        <div className="flex items-center gap-2 mb-3">
+          <span className="text-[11px] text-white/40 font-medium shrink-0">Dataset</span>
+          <input
+            value={input}
+            onChange={(e) => setInput(e.target.value)}
+            className="w-full bg-bg-soft border border-border rounded-md px-2.5 py-1 text-xs font-mono outline-none focus:border-accent-purple"
+          />
+        </div>
+
+        {/* 4 Metrics Row */}
+        {stats && (
+          <div className="grid grid-cols-4 gap-2 text-center mb-3">
+            <Stat label="Mean" value={stats.mean.toFixed(2).replace(/\.00$/, "")} />
+            <Stat label="Median" value={stats.median} />
+            <Stat label="Mode" value={stats.mode} />
+            <Stat label="Std. Dev" value={stats.stdDev.toFixed(3)} />
+          </div>
+        )}
+
+        {/* Frequency Bar Chart */}
+        <div className="bg-bg-soft border border-border rounded-xl h-32 p-1.5">
+          <ResponsiveContainer width="100%" height="100%">
+            <BarChart data={chartData} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
+              <CartesianGrid stroke="#262038" strokeDasharray="3 3" vertical={false} />
+              <XAxis dataKey="x" stroke="#5c5478" fontSize={10} />
+              <YAxis stroke="#5c5478" fontSize={10} allowDecimals={false} domain={[0, 4]} />
+              <Bar dataKey="count" fill="#3b82f6" radius={[3, 3, 0, 0]} />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
       </div>
-
-      <button
-        onClick={() =>
-          stats &&
-          onCompute?.({
-            type: "statistics",
-            expression: `stats([${nums.join(", ")}])`,
-            result: `mean=${stats.mean.toFixed(2)}, median=${stats.median}, mode=${stats.mode}, sd=${stats.stdDev.toFixed(3)}`,
-          })
-        }
-        className="w-full mt-4 py-2 rounded-lg bg-gradient-to-r from-accent-blue to-accent-purple text-sm font-medium hover:opacity-90"
-      >
-        Save to History
-      </button>
     </div>
   );
 }
 
 function Stat({ label, value }) {
   return (
-    <div className="bg-bg-soft border border-border rounded-lg py-2">
-      <p className="text-white/40 text-[11px]">{label}</p>
-      <p className="font-semibold">{value}</p>
+    <div className="bg-bg-soft border border-border rounded-md py-1.5 px-1">
+      <p className="text-white/40 text-[10px] mb-0.5">{label}</p>
+      <p className="font-semibold text-xs text-white/90">{value}</p>
     </div>
   );
 }

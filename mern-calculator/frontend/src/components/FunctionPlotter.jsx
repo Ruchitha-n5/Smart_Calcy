@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Maximize2 } from "lucide-react";
+import { Maximize2, LineChart as ChartIcon } from "lucide-react";
 import {
   LineChart,
   Line,
@@ -31,7 +31,7 @@ export default function FunctionPlotter() {
 
   const data = useMemo(() => {
     const points = [];
-    const steps = 200;
+    const steps = 150;
     for (let i = 0; i <= steps; i++) {
       const x = xMin + ((xMax - xMin) * i) / steps;
       let y;
@@ -41,7 +41,7 @@ export default function FunctionPlotter() {
       } catch {
         y = null;
       }
-      points.push({ x: +x.toFixed(3), y: y === null ? null : +y.toFixed(4) });
+      points.push({ x: +x.toFixed(2), y: y === null ? null : +y.toFixed(2) });
     }
     return points;
   }, [fn, xMin, xMax]);
@@ -55,66 +55,77 @@ export default function FunctionPlotter() {
       if (r === -1) return "-\u03c0";
       return `${r}\u03c0`;
     }
-    return v.toFixed(2);
+    return v.toFixed(1);
   };
 
   return (
-    <div className="card p-5">
-      <div className="flex items-center justify-between mb-3">
-        <h3 className="font-semibold">Function Plotter</h3>
-        <Maximize2 size={15} className="text-white/40" />
+    <div className="card h-full p-5 flex flex-col justify-between">
+      <div>
+        {/* Header */}
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2 font-semibold text-sm">
+            <ChartIcon size={16} className="text-green-400" />
+            <span>Function Plotter</span>
+          </div>
+          <button className="p-1 text-white/40 hover:text-white rounded" title="Maximize">
+            <Maximize2 size={14} />
+          </button>
+        </div>
+
+        {/* Dropdown Preset */}
+        <select
+          value={fn.label}
+          onChange={(e) => setFn(PRESETS.find((p) => p.label === e.target.value))}
+          className="w-full bg-bg-soft border border-border rounded-lg px-3 py-1.5 text-xs font-medium mb-3 outline-none focus:border-accent-purple text-white/80"
+        >
+          {PRESETS.map((p) => (
+            <option key={p.label} value={p.label} className="bg-[#14121f]">
+              {p.label}
+            </option>
+          ))}
+        </select>
+
+        {/* Chart Area */}
+        <div className="bg-bg-soft border border-border rounded-xl p-2 h-52">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={data} margin={{ top: 10, right: 10, left: -25, bottom: 0 }}>
+              <CartesianGrid stroke="#262038" strokeDasharray="3 3" />
+              <XAxis
+                dataKey="x"
+                type="number"
+                domain={[xMin, xMax]}
+                tickFormatter={fmtPi}
+                stroke="#5c5478"
+                fontSize={10}
+              />
+              <YAxis domain={[yMin, yMax]} stroke="#5c5478" fontSize={10} />
+              <ReferenceLine x={0} stroke="#3b3354" />
+              <ReferenceLine y={0} stroke="#3b3354" />
+              <Tooltip
+                contentStyle={{ background: "#151226", border: "1px solid #362e54", borderRadius: 6, fontSize: "11px" }}
+                labelFormatter={(v) => `x = ${v}`}
+              />
+              <Line type="monotone" dataKey="y" stroke="#22c55e" dot={false} strokeWidth={2} connectNulls={false} />
+            </LineChart>
+          </ResponsiveContainer>
+        </div>
       </div>
 
-      <select
-        value={fn.label}
-        onChange={(e) => setFn(PRESETS.find((p) => p.label === e.target.value))}
-        className="w-full bg-bg-soft border border-border rounded-lg px-3 py-2 text-sm mb-4 outline-none focus:border-accent-purple"
-      >
-        {PRESETS.map((p) => (
-          <option key={p.label} value={p.label}>
-            {p.label}
-          </option>
-        ))}
-      </select>
-
-      <div className="bg-bg-soft border border-border rounded-xl p-3 h-64">
-        <ResponsiveContainer width="100%" height="100%">
-          <LineChart data={data} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
-            <CartesianGrid stroke="#2a2540" strokeDasharray="3 3" />
-            <XAxis
-              dataKey="x"
-              type="number"
-              domain={[xMin, xMax]}
-              tickFormatter={fmtPi}
-              stroke="#6b6480"
-              fontSize={11}
-            />
-            <YAxis domain={[yMin, yMax]} stroke="#6b6480" fontSize={11} />
-            <ReferenceLine x={0} stroke="#3a3454" />
-            <ReferenceLine y={0} stroke="#3a3454" />
-            <Tooltip
-              contentStyle={{ background: "#1a1828", border: "1px solid #2a2540", borderRadius: 8 }}
-              labelFormatter={(v) => `x = ${v}`}
-            />
-            <Line type="monotone" dataKey="y" stroke="#22c55e" dot={false} strokeWidth={2} connectNulls={false} />
-          </LineChart>
-        </ResponsiveContainer>
-      </div>
-
-      <div className="grid grid-cols-4 gap-2 mt-4 text-xs">
+      {/* Min/Max Controls */}
+      <div className="grid grid-cols-4 gap-2 text-[11px] mt-3">
         {[
-          ["X Min", xMin, setXMin],
-          ["X Max", xMax, setXMax],
-          ["Y Min", yMin, setYMin],
-          ["Y Max", yMax, setYMax],
+          ["X Min", xMin, setXMin, "-2\u03c0"],
+          ["X Max", xMax, setXMax, "2\u03c0"],
+          ["Y Min", yMin, setYMin, "-1.5"],
+          ["Y Max", yMax, setYMax, "1.5"],
         ].map(([label, val, setter]) => (
           <div key={label}>
             <p className="text-white/40 mb-1">{label}</p>
             <input
               type="number"
               value={+val.toFixed(2)}
-              onChange={(e) => setter(parseFloat(e.target.value))}
-              className="w-full bg-bg-soft border border-border rounded-md px-2 py-1.5 outline-none focus:border-accent-purple"
+              onChange={(e) => setter(parseFloat(e.target.value) || 0)}
+              className="w-full bg-bg-soft border border-border rounded-md px-2 py-1 outline-none focus:border-accent-purple text-xs text-center font-mono"
             />
           </div>
         ))}

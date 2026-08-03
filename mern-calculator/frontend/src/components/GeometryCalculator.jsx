@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { Triangle } from "lucide-react";
+import { Triangle as TriangleIcon } from "lucide-react";
 
 const SHAPES = {
   Circle: {
@@ -63,69 +63,62 @@ export default function GeometryCalculator({ onCompute }) {
   };
 
   return (
-    <div className="card p-5">
-      <div className="flex items-center gap-2 mb-3">
-        <Triangle size={16} className="text-orange-400" />
-        <h3 className="font-semibold">Geometry Calculator</h3>
-      </div>
-
-      <select
-        value={shape}
-        onChange={(e) => selectShape(e.target.value)}
-        className="w-full bg-bg-soft border border-border rounded-lg px-3 py-2 text-sm mb-4 outline-none focus:border-accent-purple"
-      >
-        {Object.keys(SHAPES).map((s) => (
-          <option key={s}>{s}</option>
-        ))}
-      </select>
-
-      <div className="flex gap-4">
-        <div className="w-32 h-32 shrink-0 flex items-center justify-center">
-          <ShapePreview shape={shape} />
+    <div className="card h-full p-5 flex flex-col justify-between">
+      <div>
+        {/* Header */}
+        <div className="flex items-center gap-2 mb-3">
+          <TriangleIcon size={16} className="text-amber-400" />
+          <h3 className="font-semibold text-sm">Geometry Calculator</h3>
         </div>
 
-        <div className="flex-1 flex flex-col gap-3">
-          {config.fields.map((f) => (
-            <div key={f.key}>
-              <p className="text-xs text-white/40 mb-1">{f.label}</p>
-              <input
-                type="number"
-                value={values[f.key] ?? f.default}
-                onChange={(e) =>
-                  setValues((v) => ({ ...v, [f.key]: parseFloat(e.target.value) || 0 }))
-                }
-                className="w-full bg-bg-soft border border-border rounded-md px-3 py-2 text-sm outline-none focus:border-accent-purple"
-              />
-            </div>
+        {/* Dropdown */}
+        <select
+          value={shape}
+          onChange={(e) => selectShape(e.target.value)}
+          className="w-full bg-bg-soft border border-border rounded-lg px-3 py-1.5 text-xs font-medium mb-4 outline-none focus:border-accent-purple text-white/80"
+        >
+          {Object.keys(SHAPES).map((s) => (
+            <option key={s} className="bg-[#14121f]">
+              {s}
+            </option>
           ))}
+        </select>
+
+        {/* Shape Preview & Fields */}
+        <div className="flex items-center gap-4">
+          <div className="w-28 h-28 shrink-0 flex items-center justify-center bg-bg-soft/40 border border-border/40 rounded-xl p-2">
+            <ShapePreview shape={shape} />
+          </div>
+
+          <div className="flex-1 flex flex-col gap-2 min-w-0">
+            {config.fields.map((f) => (
+              <div key={f.key}>
+                <p className="text-[11px] text-white/40 mb-1">{f.label}</p>
+                <input
+                  type="number"
+                  value={values[f.key] ?? f.default}
+                  onChange={(e) =>
+                    setValues((v) => ({ ...v, [f.key]: parseFloat(e.target.value) || 0 }))
+                  }
+                  className="w-full bg-bg-soft border border-border rounded-md px-2.5 py-1.5 text-xs font-medium outline-none focus:border-accent-purple"
+                />
+              </div>
+            ))}
+
+            {Object.entries(results).map(([label, val]) => (
+              <div key={label}>
+                <p className="text-[11px] text-white/40 mb-1">{label}</p>
+                <div className="bg-bg-soft border border-border rounded-md px-2.5 py-1.5 text-xs font-semibold text-white/90">
+                  {val}
+                </div>
+              </div>
+            ))}
+          </div>
         </div>
       </div>
 
-      <div className="grid gap-3 mt-4">
-        {Object.entries(results).map(([label, val]) => (
-          <div key={label}>
-            <p className="text-xs text-white/40 mb-1">{label}</p>
-            <div className="bg-bg-soft border border-border rounded-md px-3 py-2 text-sm font-medium">
-              {val}
-            </div>
-          </div>
-        ))}
-      </div>
-
-      <button
-        onClick={() =>
-          onCompute?.({
-            type: "geometry",
-            expression: `${shape}(${config.fields.map((f) => `${f.key}=${values[f.key]}`).join(", ")})`,
-            result: Object.entries(results).map(([k, v]) => `${k}=${v}`).join(", "),
-          })
-        }
-        className="w-full mt-4 py-2 rounded-lg bg-gradient-to-r from-accent-purple to-accent-violet text-sm font-medium hover:opacity-90"
-      >
-        Save to History
-      </button>
-
-      <div className="mt-4 text-center text-xs text-white/40 bg-bg-soft border border-border rounded-lg py-2">
+      {/* Formula Footer */}
+      <div className="mt-3 text-center text-xs font-serif text-white/40 bg-bg-soft border border-border rounded-lg py-2">
         {config.formula}
       </div>
     </div>
@@ -137,26 +130,34 @@ function ShapePreview({ shape }) {
   if (shape === "Circle")
     return (
       <svg viewBox="0 0 100 100" className="w-full h-full">
-        <circle cx="50" cy="50" r="40" className={common} strokeWidth="2" />
+        <circle cx="50" cy="50" r="38" className={common} strokeWidth="1.5" />
         <circle cx="50" cy="50" r="2" fill="#8b5cf6" />
-        <line x1="50" y1="50" x2="90" y2="50" stroke="#8b5cf6" strokeWidth="1.5" />
+        <line x1="50" y1="50" x2="88" y2="50" stroke="#8b5cf6" strokeWidth="1.5" strokeDasharray="3 3" />
+        <text x="44" y="54" fill="#a78bfa" fontSize="9" fontWeight="bold">O</text>
+        <text x="68" y="44" fill="#a78bfa" fontSize="9" italic="true">r</text>
       </svg>
     );
   if (shape === "Square")
     return (
       <svg viewBox="0 0 100 100" className="w-full h-full">
-        <rect x="15" y="15" width="70" height="70" className={common} strokeWidth="2" />
+        <rect x="15" y="15" width="70" height="70" className={common} strokeWidth="1.5" />
+        <text x="46" y="93" fill="#a78bfa" fontSize="9">s</text>
       </svg>
     );
   if (shape === "Rectangle")
     return (
       <svg viewBox="0 0 100 100" className="w-full h-full">
-        <rect x="10" y="25" width="80" height="50" className={common} strokeWidth="2" />
+        <rect x="10" y="25" width="80" height="50" className={common} strokeWidth="1.5" />
+        <text x="48" y="87" fill="#a78bfa" fontSize="9">l</text>
+        <text x="92" y="53" fill="#a78bfa" fontSize="9">w</text>
       </svg>
     );
   return (
     <svg viewBox="0 0 100 100" className="w-full h-full">
-      <polygon points="50,15 85,85 15,85" className={common} strokeWidth="2" />
+      <polygon points="50,15 85,85 15,85" className={common} strokeWidth="1.5" />
+      <line x1="50" y1="15" x2="50" y2="85" stroke="#8b5cf6" strokeWidth="1" strokeDasharray="2 2" />
+      <text x="46" y="94" fill="#a78bfa" fontSize="9">b</text>
+      <text x="53" y="55" fill="#a78bfa" fontSize="9">h</text>
     </svg>
   );
 }
