@@ -39,6 +39,9 @@ body {
 .light-theme .border-border\/60 { border-color: rgb(219 227 240 / 0.8); }
 .light-theme .hover\:bg-white\/5:hover { background-color: #e8edf5; }
 
+.bg-header-bg { background-color: rgba(15, 13, 27, 0.85); }
+.light-theme .bg-header-bg { background-color: rgba(248, 250, 252, 0.85); }
+
 .light-theme .text-white,
 .light-theme .text-white\/80 { color: #1e293b; }
 .light-theme .text-white\/70 { color: #334155; }

@@ -32,7 +32,7 @@ export default function Sidebar({ active, onSelect }) {
   const [calculatorOpen, setCalculatorOpen] = useState(false);
 
   return (
-    <aside className="hidden lg:flex flex-col w-56 shrink-0 border-r border-border/60 px-3 py-5 gap-1">
+    <aside className="hidden lg:flex flex-col w-56 shrink-0 border-r border-border/60 px-3 py-5 gap-1 sticky top-0 h-screen overflow-y-auto">
       <div className="flex items-center gap-2 px-2 mb-6">
         <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-accent-purple to-accent-pink flex items-center justify-center font-bold text-sm">
           fx

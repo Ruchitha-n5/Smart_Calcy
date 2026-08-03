@@ -2,7 +2,7 @@ import { Search, Moon, Sun, ChevronDown } from "lucide-react";
 
 export default function Header({ dark, setDark }) {
   return (
-    <header className="flex items-center gap-4 px-6 py-4 border-b border-border/60">
+    <header className="sticky top-0 z-40 flex items-center gap-4 px-6 py-4 border-b border-border/60 bg-header-bg backdrop-blur-md transition-colors">
       <div className="flex-1 max-w-md relative">
         <Search size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-white/40" />
         <input

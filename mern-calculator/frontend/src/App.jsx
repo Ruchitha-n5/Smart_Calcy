@@ -121,35 +121,35 @@ export default function App() {
             </div>
           )}
 
-          <div ref={(element) => (sectionRefs.current.Home = element)} className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6 scroll-mt-6">
+          <div ref={(element) => (sectionRefs.current.Home = element)} className="grid grid-cols-1 xl:grid-cols-[1fr_320px] gap-6 scroll-mt-20">
             <HeroBanner />
             <QuickActions onSelect={handleNavigation} />
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            <div ref={(element) => (sectionRefs.current.Calculator = element)} className="scroll-mt-6">
+            <div ref={(element) => (sectionRefs.current.Calculator = element)} className="scroll-mt-20">
               {calculatorMode === "basic" ? (
                 <BasicCalculator onCompute={handleCompute} />
               ) : (
                 <ScientificCalculator onCompute={handleCompute} />
               )}
             </div>
-            <div ref={(element) => (sectionRefs.current["Graph Plotter"] = element)} className="scroll-mt-6">
+            <div ref={(element) => (sectionRefs.current["Graph Plotter"] = element)} className="scroll-mt-20">
               <FunctionPlotter />
             </div>
-            <div ref={(element) => (sectionRefs.current.Geometry = element)} className="scroll-mt-6">
+            <div ref={(element) => (sectionRefs.current.Geometry = element)} className="scroll-mt-20">
               <GeometryCalculator onCompute={handleCompute} />
             </div>
           </div>
 
           <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            <div ref={(element) => (sectionRefs.current.Matrix = element)} className="scroll-mt-6">
+            <div ref={(element) => (sectionRefs.current.Matrix = element)} className="scroll-mt-20">
               <MatrixCalculator onCompute={handleCompute} />
             </div>
-            <div ref={(element) => (sectionRefs.current.Statistics = element)} className="scroll-mt-6">
+            <div ref={(element) => (sectionRefs.current.Statistics = element)} className="scroll-mt-20">
               <Statistics onCompute={handleCompute} />
             </div>
-            <div ref={(element) => (sectionRefs.current.History = element)} className="scroll-mt-6">
+            <div ref={(element) => (sectionRefs.current.History = element)} className="scroll-mt-20">
               <HistoryPanel
                 items={history}
                 loading={loading}
